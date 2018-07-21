@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     ListView listView;
     static ArrayList<String> places = new ArrayList<>();
+
     static ArrayList<LatLng> locations = new ArrayList<>();
     static ArrayAdapter arrayAdapter;
 
