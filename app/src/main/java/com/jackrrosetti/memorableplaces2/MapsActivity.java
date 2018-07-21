@@ -3,6 +3,7 @@ package com.jackrrosetti.memorableplaces2;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -14,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,7 +25,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -145,6 +149,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(latLng).title(address));
         MainActivity.places.add(address);
         MainActivity.locations.add(latLng);
+        SharedPreferences sharedPreferences = this.getSharedPreferences("com.jackrrosetti.memorableplaces2", Context.MODE_PRIVATE);
+
+        try {
+
+            ArrayList<String> latitudes = new ArrayList<>();
+            ArrayList<String> longitudes = new ArrayList<>();
+
+            for(LatLng coord : MainActivity.locations){
+                latitudes.add(Double.toString(coord.latitude));
+                longitudes.add(Double.toString(coord.longitude));
+
+            }
+
+            sharedPreferences.edit().putString("places", ObjectSerializer.serialize(MainActivity.places)).apply();
+            sharedPreferences.edit().putString("long", ObjectSerializer.serialize(longitudes)).apply();
+            sharedPreferences.edit().putString("lat", ObjectSerializer.serialize(latitudes)).apply();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
 
         MainActivity.arrayAdapter.notifyDataSetChanged();
 
