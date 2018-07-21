@@ -9,14 +9,13 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -29,14 +28,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener{
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
 
     private GoogleMap mMap;
     LocationManager locationManager;
     LocationListener locationListener;
 
-    public void centerMapOnLocation(Location location, String title){
-        if(location != null) {
+    public void centerMapOnLocation(Location location, String title) {
+        if (location != null) {
             LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.clear();
             mMap.addMarker(new MarkerOptions().position(userLocation).title(title));
@@ -48,8 +47,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
                 Location lastKnown = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 centerMapOnLocation(lastKnown, "Your Location");
@@ -76,7 +75,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         Intent intent = getIntent();
-        if(intent.getIntExtra("placeNumber", 0) == 0){
+        if (intent.getIntExtra("placeNumber", 0) == 0) {
             locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
             locationListener = new LocationListener() {
                 @Override
@@ -101,21 +100,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             };
 
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
                 Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 centerMapOnLocation(lastKnownLocation, "Your Location");
             } else {
-                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
         } else {
             Location placeLocation = new Location(LocationManager.GPS_PROVIDER);
-            placeLocation.setLatitude(MainActivity.locations.get(intent.getIntExtra("placeNumber",0)).latitude);
-            placeLocation.setLongitude(MainActivity.locations.get(intent.getIntExtra("placeNumber",0)).longitude);
+            placeLocation.setLatitude(MainActivity.locations.get(intent.getIntExtra("placeNumber", 0)).latitude);
+            placeLocation.setLongitude(MainActivity.locations.get(intent.getIntExtra("placeNumber", 0)).longitude);
 
-            centerMapOnLocation(placeLocation, MainActivity.places.get(intent.getIntExtra("placeNumber",0)));
+            centerMapOnLocation(placeLocation, MainActivity.places.get(intent.getIntExtra("placeNumber", 0)));
         }
     }
-
 
 
     @Override
@@ -123,20 +121,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
         String address = "";
 
-        try{
+        try {
             List<Address> listAddresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
 
-            if(listAddresses.size() > 0 && listAddresses != null){
-                if(listAddresses.get(0).getThoroughfare() != null){
-                    if(listAddresses.get(0).getSubThoroughfare() != null){
+            if (listAddresses.size() > 0 && listAddresses != null) {
+                if (listAddresses.get(0).getThoroughfare() != null) {
+                    if (listAddresses.get(0).getSubThoroughfare() != null) {
                         address += listAddresses.get(0).getSubThoroughfare() + " ";
                     }
                     address += listAddresses.get(0).getThoroughfare();
                 }
             }
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
